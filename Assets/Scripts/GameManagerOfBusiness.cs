@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using TapjoyUnity;
 
 public class GameManagerOfBusiness : MonoBehaviour {
     public long totalcoin;
@@ -152,230 +151,30 @@ public class GameManagerOfBusiness : MonoBehaviour {
     }
     public bool shouldPreload = false;
     public bool contentIsReadyForPlacement = false;
-    public TJPlacement directPlayPlacement;
-    public TJPlacement offerwallPlacement;
+   
     void OnEnable()
     {
         Debug.Log("C# PlacementExample Enable -- Adding Tapjoy Placement delegates");
-
-        // Placement Delegates
-        TJPlacement.OnRequestSuccess += HandlePlacementRequestSuccess;
-        TJPlacement.OnRequestFailure += HandlePlacementRequestFailure;
-        TJPlacement.OnContentReady += HandlePlacementContentReady;
-        TJPlacement.OnContentShow += HandlePlacementContentShow;
-        TJPlacement.OnContentDismiss += HandlePlacementContentDismiss;
-        TJPlacement.OnPurchaseRequest += HandleOnPurchaseRequest;
-        TJPlacement.OnRewardRequest += HandleOnRewardRequest;
-
-        // Tapjoy Placement Video Delegates
-        TJPlacement.OnVideoStart += HandleVideoStart;
-        TJPlacement.OnVideoError += HandleVideoError;
-        TJPlacement.OnVideoComplete += HandleVideoComplete;
-
-        // Currency Delegates
-        Tapjoy.OnAwardCurrencyResponse += HandleAwardCurrencyResponse;
-        Tapjoy.OnAwardCurrencyResponseFailure += HandleAwardCurrencyResponseFailure;
-        Tapjoy.OnSpendCurrencyResponse += HandleSpendCurrencyResponse;
-        Tapjoy.OnSpendCurrencyResponseFailure += HandleSpendCurrencyResponseFailure;
-        Tapjoy.OnGetCurrencyBalanceResponse += HandleGetCurrencyBalanceResponse;
-        Tapjoy.OnGetCurrencyBalanceResponseFailure += HandleGetCurrencyBalanceResponseFailure;
-        Tapjoy.OnEarnedCurrency += HandleEarnedCurrency;
-if (!Tapjoy.IsConnected) {
-      Tapjoy.Connect();
-    }
-Tapjoy.OnConnectSuccess += HandleConnectSuccess;
-        // Preload direct play placement
-        if (directPlayPlacement == null)
-        {
-            directPlayPlacement = TJPlacement.CreatePlacement("video_unit");
-            if (directPlayPlacement != null)
-            {
-                directPlayPlacement.RequestContent();
-            }
-        }
-
-        // Create offerwall placement
-        if (offerwallPlacement == null)
-        {
-            offerwallPlacement = TJPlacement.CreatePlacement("offerwall_unit");
-			
-        }
-
-
+    
     }
 	public void HandleConnectSuccess()
 {
 	Debug.Log ("Connect Success");
 
 	//Now that we are connected we can start preloading our placements
-   offerwallPlacement = TJPlacement.CreatePlacement("offerwall_unit");
-    offerwallPlacement.RequestContent();
+  
 }
     void OnDisable()
     {
         Debug.Log("C#: Disabling and removing Tapjoy Delegates");
 
-        // Placement delegates
-        TJPlacement.OnRequestSuccess -= HandlePlacementRequestSuccess;
-        TJPlacement.OnRequestFailure -= HandlePlacementRequestFailure;
-        TJPlacement.OnContentReady -= HandlePlacementContentReady;
-        TJPlacement.OnContentShow -= HandlePlacementContentShow;
-        TJPlacement.OnContentDismiss -= HandlePlacementContentDismiss;
-        TJPlacement.OnPurchaseRequest -= HandleOnPurchaseRequest;
-        TJPlacement.OnRewardRequest -= HandleOnRewardRequest;
-
-        // Tapjoy Placement Video Delegates
-        TJPlacement.OnVideoStart -= HandleVideoStart;
-        TJPlacement.OnVideoError -= HandleVideoError;
-        TJPlacement.OnVideoComplete -= HandleVideoComplete;
-
-        // Currency Delegates
-        Tapjoy.OnAwardCurrencyResponse -= HandleAwardCurrencyResponse;
-        Tapjoy.OnAwardCurrencyResponseFailure -= HandleAwardCurrencyResponseFailure;
-        Tapjoy.OnSpendCurrencyResponse -= HandleSpendCurrencyResponse;
-        Tapjoy.OnSpendCurrencyResponseFailure -= HandleSpendCurrencyResponseFailure;
-        Tapjoy.OnGetCurrencyBalanceResponse -= HandleGetCurrencyBalanceResponse;
-        Tapjoy.OnGetCurrencyBalanceResponseFailure -= HandleGetCurrencyBalanceResponseFailure;
-        Tapjoy.OnEarnedCurrency -= HandleEarnedCurrency;
+     
     }
-    #region Tapjoy Delegate Handlers
-
-    #region Placement Delegate Handlers
-    public void HandlePlacementRequestSuccess(TJPlacement placement)
-    {
-		 Debug.Log("Request Content available for " + placement.GetName());
-        if (placement.IsContentAvailable())
-        {
-            Debug.Log("C#: Content available for " + placement.GetName());
-
-			//if(placement.GetName() == "offerwall_unit") {
-				// Show offerwall immediately
-				placement.ShowContent();
-			//}
-
-
-        }
-        else
-        {
-
-            Debug.Log("C#: No content available for " + placement.GetName());
-        }
-    }
-
-    public void HandlePlacementRequestFailure(TJPlacement placement, string error)
-    {
-        Debug.Log("C#: HandlePlacementRequestFailure");
-        Debug.Log("C#: Request for " + placement.GetName() + " has failed because: " + error);
-
-    }
-
-    public void HandlePlacementContentReady(TJPlacement placement)
-    {
-        Debug.Log("C#: HandlePlacementContentReady");
-
-        if (placement.IsContentAvailable())
-        {
-           // placement.ShowContent();
-        }
-        else
-        {
-            Debug.Log("C#: no content");
-        }
-    }
-
-    public void HandlePlacementContentShow(TJPlacement placement)
-    {
-        Debug.Log("C#: HandlePlacementContentShow");
-    }
-
-    public void HandlePlacementContentDismiss(TJPlacement placement)
-    {
-        Debug.Log("C#: HandlePlacementContentDismiss");
-        contentIsReadyForPlacement = false;
-        Tapjoy.GetCurrencyBalance();
-    }
-
-    void HandleOnPurchaseRequest(TJPlacement placement, TJActionRequest request, string productId)
-    {
-        Debug.Log("C#: HandleOnPurchaseRequest");
-        request.Completed();
-    }
-
-    void HandleOnRewardRequest(TJPlacement placement, TJActionRequest request, string itemId, int quantity)
-    {
-        Debug.Log("C#: HandleOnRewardRequest");
-        request.Completed();
-    }
-
-    #endregion
-    public int balanceOfGem;
-    #region Currency Delegate Handlers
-    public void HandleAwardCurrencyResponse(string currencyName, int balance)
-    {
-        Debug.Log("C#: HandleAwardCurrencySucceeded: currencyName: " + currencyName + ", balance: " + balance);
-     //   balanceOfGem = balance;
-        //Tapjoy.AwardCurrency(balanceOfGem);
-    }
-
-    public void HandleAwardCurrencyResponseFailure(string error)
-    {
-        Debug.Log("C#: HandleAwardCurrencyResponseFailure: " + error);
-    }
-
-    public void HandleGetCurrencyBalanceResponse(string currencyName, int balance)
-    {
-        Debug.Log("C#: HandleGetCurrencyBalanceResponse: currencyName: " + currencyName + ", balance: " + balance);
-
-    }
-
-    public void HandleGetCurrencyBalanceResponseFailure(string error)
-    {
-        Debug.Log("C#: HandleGetCurrencyBalanceResponseFailure: " + error);
-    }
-
-    public void HandleSpendCurrencyResponse(string currencyName, int balance)
-    {
-        Debug.Log("C#: HandleSpendCurrencyResponse: currencyName: " + currencyName + ", balance: " + balance);
-
-    }
-
-    public void HandleSpendCurrencyResponseFailure(string error)
-    {
-        Debug.Log("C#: HandleSpendCurrencyResponseFailure: " + error);
-    }
-
-    public void HandleEarnedCurrency(string currencyName, int amount)
-    {
-        Debug.Log("C#: HandleEarnedCurrency: currencyName: " + currencyName + ", amount: " + amount);
-        totalgem = totalgem + amount;
-
-        Tapjoy.ShowDefaultEarnedCurrencyAlert();
-    }
-    #endregion
-
-    #region Video Delegate Handlers
-    public void HandleVideoStart(TJPlacement placement)
-    {
-        Debug.Log("C#: HandleVideoStarted for placement " + placement.GetName());
-    }
-
-    public void HandleVideoError(TJPlacement placement, string message)
-    {
-        Debug.Log("C#: HandleVideoError for placement " + placement.GetName() + "with message: " + message);
-    }
-
-    public void HandleVideoComplete(TJPlacement placement)
-    {
-        Debug.Log("C#: HandleVideoComplete for placement " + placement.GetName());
-    }
-    #endregion
-    #endregion
-
+   
     public void FreeGemsPressed()
     {
 		Debug.Log("Free Gems Pressed");
-        Tapjoy.GetCurrencyBalance();
-        offerwallPlacement.RequestContent();
+      
     }
     void Load()
     {
@@ -489,8 +288,7 @@ Tapjoy.OnConnectSuccess += HandleConnectSuccess;
     void Start() {
         //   totalcoin = 11;
         // totalgem = 50;
-        TJPlacement p = TJPlacement.CreatePlacement("UserOfferWall");
-        Load();
+       Load();
         mainroot.gameObject.SetActive(false);
         mainroot.gameObject.SetActive(true);
         CollectionScreen.SetActive(false);
