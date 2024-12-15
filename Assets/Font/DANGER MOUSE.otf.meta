@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 1c1cb84987bbd5b4db051ff7bce832f7
+timeCreated: 1488537986
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DANGER MOUSE
+  fontNames:
+  - DANGER MOUSE
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
